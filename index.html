@@ -73,7 +73,7 @@
             letter-spacing: 2px;
         }
 
-        /* CONTAINER DO RICKROLL EM TELA CHEIA */
+        /* CONTAINER DO RICKROLL */
         #rickroll-container {
             display: none;
             position: fixed;
@@ -89,6 +89,18 @@
             height: 100%;
             object-fit: cover;
         }
+
+        /* CAMADA INVISÍVEL PARA FORÇAR INTERAÇÃO */
+        #click-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999;
+            background: transparent;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +108,9 @@
     <script>
         alert("Sua mente está prestes a ser hackeada.\nDeseja entrar na Matrix?");
     </script>
+
+    <!-- Camada invisível que captura o primeiro clique do usuário -->
+    <div id="click-overlay"></div>
 
     <canvas id="matrix-canvas"></canvas>
     <div id="dvd-text">hello world</div>
@@ -115,9 +130,9 @@
         </div>
     </div>
 
-    <!-- VÍDEO DO RICKROLL CORRIGIDO PARA O FIREFOX -->
+    <!-- VÍDEO COMPATÍVEL COM AS REGRAS DO FIREFOX -->
     <div id="rickroll-container">
-        <video id="rickroll-video" loop muted playsinline>
+        <video id="rickroll-video" loop>
             <source src="rickroll.mp4" type="video/mp4">
             Seu navegador não suporta vídeo.
         </video>
@@ -170,13 +185,22 @@
         function changeColor() { textElement.style.color = colors[Math.floor(Math.random() * colors.length)]; }
         moveText();
 
-        // --- GATILHO COMPATÍVEL COM FIREFOX ---
+        // --- CONTROLE DE INTERAÇÃO DO USUÁRIO ---
+        let userInteracted = false;
+        const overlay = document.getElementById('click-overlay');
+        const bgAudio = document.getElementById('bg-audio');
+
+        overlay.addEventListener('click', () => {
+            userInteracted = true;
+            overlay.style.display = 'none'; // Some com a camada para liberar os botões embaixo
+            if(bgAudio) bgAudio.play(); // Garante o início do Sparta Remix com som
+        });
+
+        // --- GATILHO DEFINITIVO ANTI-PAUSA ---
         const button = document.getElementById('flee-button');
 
         function startRickroll() {
-            const bgAudio = document.getElementById('bg-audio');
             if(bgAudio) bgAudio.pause();
-            
             clearInterval(matrixInterval);
 
             const container = document.getElementById('rickroll-container');
@@ -185,13 +209,9 @@
             if(container && rickVideo) {
                 container.style.display = 'block';
                 
-                // Executa a inicialização dos frames em modo seguro
-                rickVideo.play().then(() => {
-                    // Se o Firefox aceitou a reprodução, removemos o mudo para liberar o áudio
-                    rickVideo.muted = false;
-                }).catch(error => {
-                    console.log("Firefox bloqueou a reprodução com áudio automático. Rodando mudo:", error);
-                    // Garante que o vídeo rode mesmo sem a permissão do áudio prévia para evitar tela preta
+                // Como houve o clique na janela, o Firefox dá permissão total sem pausar o player
+                rickVideo.play().catch(error => {
+                    console.log("Falha na reprodução direta, rodando em modo de segurança:", error);
                     rickVideo.muted = true;
                     rickVideo.play();
                 });
