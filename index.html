@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World Neo Edition 95</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Efeito Matrix de Fundo */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        /* 1. Efeito DVD Quicando */
+        #dvd-text {
+            position: absolute;
+            font-size: 50px;
+            font-weight: bold;
+            white-space: nowrap;
+            user-select: none;
+            z-index: 5;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Interface do Site */
+        .ui-container {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        /* 2. Botão que foge */
+        #flee-button {
+            position: absolute;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #ff0055;
+            color: white;
+            border: 3px solid white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.05s ease;
+            box-shadow: 0px 0px 15px rgba(255, 0, 85, 0.7);
+        }
+
+        /* 3. Contador Anos 90 */
+        .counter-box {
+            border: 2px dashed #00ff00;
+            padding: 5px 15px;
+            background: rgba(17, 17, 17, 0.9);
+            font-size: 14px;
+        }
+        .counter-number {
+            color: #ffcc00;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pop-up de Erro Falso -->
+    <script>
+        alert("Sua mente está prestes a ser hackeada.\nDeseja entrar na Matrix?");
+    </script>
+
+    <!-- Fundo Matrix O Grand Finale -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Texto DVD -->
+    <div id="dvd-text">hello world</div>
+
+    <!-- Interface Fixa Embaixo -->
+    <div class="ui-container">
+        <!-- Música de fundo (Exemplo padrão de áudio) -->
+        <audio autoplay loop controls style="opacity: 0.5; height: 30px;">
+    <source src="videoplayback.mp3" type="audio/mpeg">
+    Seu navegador não suporta áudio.
+</audio>
+
+
+        <!-- Contador -->
+        <div class="counter-box">
+            VISITANTE NÚMERO: <span class="counter-number">999.874.123</span>
+        </div>
+
+        <!-- Espaço para o botão fugir por perto -->
+        <div style="height: 60px; position: relative; width: 300px;">
+            <button id="flee-button">DESTRUIR A INTERNET</button>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGICA DO CANVA MATRIX ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$#@%';
+        const matrixLetters = letters.split('');
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixLetters[Math.floor(Math.random() * matrixLetters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 30);
+
+
+        // --- LÓGICA DO TEXTO ESTILO DVD ---
+        const textElement = document.getElementById('dvd-text');
+        let posX = Math.random() * (window.innerWidth - 300);
+        let posY = Math.random() * (window.innerHeight - 200);
+        let speedX = 3;
+        let speedY = 3;
+        const colors = ['#00ff00', '#ff00ff', '#00ffff', '#ffff00', '#ff0000', '#0000ff', '#ffffff'];
+
+        function moveText() {
+            posX += speedX;
+            posY += speedY;
+
+            const textWidth = textElement.offsetWidth;
+            const textHeight = textElement.offsetHeight;
+
+            if (posX <= 0 || posX + textWidth >= window.innerWidth) {
+                speedX = -speedX;
+                changeColor();
+            }
+            if (posY <= 0 || posY + textHeight >= window.innerHeight) {
+                speedY = -speedY;
+                changeColor();
+            }
+
+            textElement.style.left = posX + 'px';
+            textElement.style.top = posY + 'px';
+            requestAnimationFrame(moveText);
+        }
+
+        function changeColor() {
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            textElement.style.color = randomColor;
+        }
+        moveText();
+
+
+        // --- LÓGICA DO BOTÃO QUE FOGE ---
+        const button = document.getElementById('flee-button');
+        button.addEventListener('mouseover', () => {
+            const newX = Math.random() * (window.innerWidth - button.offsetWidth);
+            const newY = Math.random() * (window.innerHeight - button.offsetHeight);
+            button.style.position = 'fixed';
+            button.style.left = newX + 'px';
+            button.style.top = newY + 'px';
+        });
+    </script>
+</body>
+</html>
+
