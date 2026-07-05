@@ -1,3 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World Neo Edition 95</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        #dvd-text {
+            position: absolute;
+            font-size: 50px;
+            font-weight: bold;
+            white-space: nowrap;
+            user-select: none;
+            z-index: 5;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .ui-container {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        #flee-button {
+            position: absolute;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #ff0055;
+            color: white;
+            border: 3px solid white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.05s ease;
+            box-shadow: 0px 0px 15px rgba(255, 0, 85, 0.7);
+            z-index: 15;
+        }
+
+        .counter-box {
+            border: 2px dashed #00ff00;
+            padding: 5px 15px;
+            background: rgba(17, 17, 17, 0.9);
+            font-size: 14px;
+        }
+        .counter-number {
+            color: #ffcc00;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* TELA AZUL DA MORTE */
+        #blue-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0000aa;
+            color: #ffffff;
+            font-family: 'Lucida Console', Courier, monospace;
+            padding: 50px;
+            box-sizing: border-box;
+            z-index: 9999;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        .bsod-center {
+            text-align: center;
+            background: #cccccc;
+            color: #0000aa;
+            padding: 2px 10px;
+            display: inline-block;
+        }
+        #typed-command {
+            color: #00ff00;
+            font-weight: bold;
+            background-color: #000000;
+            padding: 2px 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        alert("Sua mente está prestes a ser hackeada.\nDeseja entrar na Matrix?");
+    </script>
+
+    <canvas id="matrix-canvas"></canvas>
+    <div id="dvd-text">hello world</div>
+
+    <div class="ui-container">
+        <audio id="bg-audio" autoplay loop controls style="opacity: 0.5; height: 30px;">
+            <source src="videoplayback.mp3" type="audio/mpeg">
+            Seu navegador não suporta áudio.
+        </audio>
+
+        <div class="counter-box">
+            VISITANTE NÚMERO: <span class="counter-number">999.874.123</span>
+        </div>
+
+        <div style="height: 60px; position: relative; width: 300px;">
+            <button id="flee-button">DESTRUIR A INTERNET</button>
+        </div>
+    </div>
+
+    <!-- ESTRUTURA DA TELA AZUL -->
+    <div id="blue-screen">
+        <div class="bsod-center">Windows</div>
+        <br><br>
+        A fatal exception 0E has occurred at 0028:C0011E36 in VXD VMM(01) +<br>
+        00004E36. The current application will be terminated.<br><br>
+        * Error: SPARTA_REMIX_OVERFLOW_DETECTION<br>
+        * The internet was successfully destroyed by your impatience.<br><br>
+        To fix the system, type "hello world" below:<br><br>
+        Digite o comando: <span id="typed-command"></span><span id="cursor">_</span>
+    </div>
+
     <script>
         // --- MATRIX BACKGROUND ---
         const canvas = document.getElementById('matrix-canvas');
@@ -45,9 +188,8 @@
         function changeColor() { textElement.style.color = colors[Math.floor(Math.random() * colors.length)]; }
         moveText();
 
-        // --- BOTÃO QUE FOGE + TELA AZUL CORRIGIDA ---
+        // --- BOTÃO DA TELA AZUL IMEDIATA ---
         const button = document.getElementById('flee-button');
-        let annoyCount = 0;
         let bsodActive = false;
         let typedText = "";
 
@@ -56,47 +198,31 @@
             typedText = "";
             document.getElementById('typed-command').innerText = "";
             document.getElementById('blue-screen').style.display = 'block';
-            document.getElementById('bg-audio').pause();
+            
+            // Pausa o som se ele estiver tocando para dar o efeito dramático
+            const audio = document.getElementById('bg-audio');
+            if(audio) audio.pause();
+            
             clearInterval(matrixInterval);
         }
 
         function recoverFromBSOD() {
             bsodActive = false;
-            annoyCount = 0;
             document.getElementById('blue-screen').style.display = 'none';
-            document.getElementById('bg-audio').play();
+            
+            const audio = document.getElementById('bg-audio');
+            if(audio) audio.play();
+            
             startMatrix();
-            button.style.position = 'absolute';
-            button.style.left = 'auto';
-            button.style.top = 'auto';
-            button.style.zIndex = '10';
         }
 
+        // Se encostar o mouse OU se clicar, a tela azul ativa na hora!
         button.addEventListener('mouseover', () => {
-            if(bsodActive) return;
-            annoyCount++;
-            
-            if (annoyCount >= 5) { 
-                triggerBSOD(); 
-                return; 
-            }
-            
-            // CORREÇÃO: Garante que o botão fique visível na tela e por cima do Matrix
-            button.style.position = 'fixed'; 
-            button.style.zIndex = '99999';
-
-            // Calcula limites seguros para o botão não sumir para fora das bordas da página
-            const maxW = window.innerWidth - button.offsetWidth - 20;
-            const maxH = window.innerHeight - button.offsetHeight - 20;
-            
-            const newX = Math.max(10, Math.random() * maxW);
-            const newY = Math.max(10, Math.random() * maxH);
-            
-            button.style.left = newX + 'px'; 
-            button.style.top = newY + 'px';
+            if(!bsodActive) triggerBSOD();
         });
-
-        button.addEventListener('click', triggerBSOD);
+        button.addEventListener('click', () => {
+            if(!bsodActive) triggerBSOD();
+        });
 
         // --- ESCUTA O TECLADO NA TELA AZUL ---
         window.addEventListener('keydown', (e) => {
@@ -120,4 +246,5 @@
             cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
         }, 500);
     </script>
-
+</body>
+</html>
