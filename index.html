@@ -187,7 +187,7 @@
         function changeColor() { textElement.style.color = colors[Math.floor(Math.random() * colors.length)]; }
         moveText();
 
-        // --- BOTÃO QUE FOGE + TELA AZUL ---
+        // --- BOTÃO QUE FOGE + TELA AZUL CORRIGIDA ---
         const button = document.getElementById('flee-button');
         let annoyCount = 0;
         let bsodActive = false;
@@ -197,6 +197,8 @@
             bsodActive = true;
             typedText = "";
             document.getElementById('typed-command').innerText = "";
+            document.getElementById('blue-screen').style.top = '0px';
+            document.getElementById('blue-screen').style.left = '0px';
             document.getElementById('blue-screen').style.display = 'block';
             document.getElementById('bg-audio').pause();
             clearInterval(matrixInterval);
@@ -216,11 +218,21 @@
         button.addEventListener('mouseover', () => {
             if(bsodActive) return;
             annoyCount++;
-            if (annoyCount >= 5) { triggerBSOD(); return; }
+            
+            // CORREÇÃO: Verifica se é maior ou igual a 5 para não quebrar a lógica
+            if (annoyCount >= 5) { 
+                triggerBSOD(); 
+                return; 
+            }
+            
             const newX = Math.random() * (window.innerWidth - button.offsetWidth);
             const newY = Math.random() * (window.innerHeight - button.offsetHeight);
-            button.style.position = 'fixed'; button.style.left = newX + 'px'; button.style.top = newY + 'px';
+            button.style.position = 'fixed'; 
+            button.style.left = newX + 'px'; 
+            button.style.top = newY + 'px';
         });
+
+        // Se o usuário conseguir clicar, vai para a tela azul direto
         button.addEventListener('click', triggerBSOD);
 
         // --- ESCUTA O TECLADO NA TELA AZUL ---
@@ -235,7 +247,6 @@
 
             document.getElementById('typed-command').innerText = typedText;
 
-            // CONFIGURADO: Desbloqueia apenas digitando hello world
             if (typedText === 'hello world') {
                 recoverFromBSOD();
             }
