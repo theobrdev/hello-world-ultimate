@@ -117,7 +117,8 @@
 
     <div class="ui-container">
         <audio id="bg-audio" autoplay loop controls style="opacity: 0.5; height: 30px;">
-            <source src="videoplayback.mp3" type="audio/mpeg">
+            <!-- CORREÇÃO: Caminho relativo absoluto para o servidor online -->
+            <source src="./videoplayback.mp3" type="audio/mpeg">
             Seu navegador não suporta áudio.
         </audio>
 
@@ -133,7 +134,8 @@
     <!-- VÍDEO COMPATÍVEL COM AS REGRAS DO FIREFOX -->
     <div id="rickroll-container">
         <video id="rickroll-video" loop>
-            <source src="rickroll.mp4" type="video/mp4">
+            <!-- CORREÇÃO: Caminho relativo absoluto para o servidor online -->
+            <source src="./rickroll.mp4" type="video/mp4">
             Seu navegador não suporta vídeo.
         </video>
     </div>
@@ -192,8 +194,8 @@
 
         overlay.addEventListener('click', () => {
             userInteracted = true;
-            overlay.style.display = 'none'; // Some com a camada para liberar os botões embaixo
-            if(bgAudio) bgAudio.play(); // Garante o início do Sparta Remix com som
+            overlay.style.display = 'none';
+            if(bgAudio) bgAudio.play();
         });
 
         // --- GATILHO DEFINITIVO ANTI-PAUSA ---
@@ -209,7 +211,6 @@
             if(container && rickVideo) {
                 container.style.display = 'block';
                 
-                // Como houve o clique na janela, o Firefox dá permissão total sem pausar o player
                 rickVideo.play().catch(error => {
                     console.log("Falha na reprodução direta, rodando em modo de segurança:", error);
                     rickVideo.muted = true;
