@@ -136,7 +136,7 @@
         00004E36. The current application will be terminated.<br><br>
         * Error: SPARTA_REMIX_OVERFLOW_DETECTION<br>
         * The internet was successfully destroyed by your impatience.<br><br>
-        To fix the system, type the Python command to show "hello world" below:<br><br>
+        To fix the system, type "hello world" below:<br><br>
         Digite o comando: <span id="typed-command"></span><span id="cursor">_</span>
     </div>
 
@@ -208,7 +208,6 @@
             document.getElementById('blue-screen').style.display = 'none';
             document.getElementById('bg-audio').play();
             startMatrix();
-            // Reseta a posição do botão para o centro para não sumir da tela
             button.style.position = 'absolute';
             button.style.left = 'auto';
             button.style.top = 'auto';
@@ -228,7 +227,6 @@
         window.addEventListener('keydown', (e) => {
             if (!bsodActive) return;
 
-            // Evita comandos do navegador como F5
             if (e.key.length === 1) {
                 typedText += e.key;
             } else if (e.key === 'Backspace') {
@@ -237,13 +235,12 @@
 
             document.getElementById('typed-command').innerText = typedText;
 
-            // Se digitar exatamente o comando, o site ressuscita
+            // CONFIGURADO: Desbloqueia apenas digitando hello world
             if (typedText === 'hello world') {
                 recoverFromBSOD();
             }
         });
 
-        // Piscar o cursor da digitação
         setInterval(() => {
             const cursor = document.getElementById('cursor');
             cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
@@ -251,3 +248,4 @@
     </script>
 </body>
 </html>
+
