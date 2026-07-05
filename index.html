@@ -15,7 +15,6 @@
             height: 100vh;
         }
 
-        /* Efeito Matrix de Fundo */ 
         #matrix-canvas {
             position: fixed;
             top: 0;
@@ -25,7 +24,6 @@
             z-index: 1;
         }
 
-        /* 1. Efeito DVD Quicando */
         #dvd-text {
             position: absolute;
             font-size: 50px;
@@ -36,7 +34,6 @@
             text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
         }
 
-        /* Interface do Site */
         .ui-container {
             position: absolute;
             bottom: 20px;
@@ -49,7 +46,6 @@
             z-index: 10;
         }
 
-        /* 2. Botão que foge */
         #flee-button {
             position: absolute;
             padding: 15px 30px;
@@ -64,7 +60,6 @@
             box-shadow: 0px 0px 15px rgba(255, 0, 85, 0.7);
         }
 
-        /* 3. Contador Anos 90 */
         .counter-box {
             border: 2px dashed #00ff00;
             padding: 5px 15px;
@@ -76,125 +71,183 @@
             font-weight: bold;
             letter-spacing: 2px;
         }
+
+        /* TELA AZUL DA MORTE */
+        #blue-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0000aa;
+            color: #ffffff;
+            font-family: 'Lucida Console', Courier, monospace;
+            padding: 50px;
+            box-sizing: border-box;
+            z-index: 9999;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        .bsod-center {
+            text-align: center;
+            background: #cccccc;
+            color: #0000aa;
+            padding: 2px 10px;
+            display: inline-block;
+        }
+        #typed-command {
+            color: #00ff00;
+            font-weight: bold;
+            background-color: #000000;
+            padding: 2px 5px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Pop-up de Erro Falso -->
     <script>
         alert("Sua mente está prestes a ser hackeada.\nDeseja entrar na Matrix?");
     </script>
 
-    <!-- Fundo Matrix O Grand Finale -->
     <canvas id="matrix-canvas"></canvas>
-
-    <!-- Texto DVD -->
     <div id="dvd-text">hello world</div>
 
-    <!-- Interface Fixa Embaixo -->
     <div class="ui-container">
-        <!-- Música de fundo (Exemplo padrão de áudio) -->
-        <audio autoplay loop controls style="opacity: 0.5; height: 30px;">
-    <source src="videoplayback.mp3" type="audio/mpeg">
-    Seu navegador não suporta áudio.
-</audio>
+        <audio id="bg-audio" autoplay loop controls style="opacity: 0.5; height: 30px;">
+            <source src="videoplayback.mp3" type="audio/mpeg">
+            Seu navegador não suporta áudio.
+        </audio>
 
-
-        <!-- Contador -->
         <div class="counter-box">
             VISITANTE NÚMERO: <span class="counter-number">999.874.123</span>
         </div>
 
-        <!-- Espaço para o botão fugir por perto -->
         <div style="height: 60px; position: relative; width: 300px;">
             <button id="flee-button">DESTRUIR A INTERNET</button>
         </div>
     </div>
 
+    <!-- ESTRUTURA DA TELA AZUL -->
+    <div id="blue-screen">
+        <div class="bsod-center">Windows</div>
+        <br><br>
+        A fatal exception 0E has occurred at 0028:C0011E36 in VXD VMM(01) +<br>
+        00004E36. The current application will be terminated.<br><br>
+        * Error: SPARTA_REMIX_OVERFLOW_DETECTION<br>
+        * The internet was successfully destroyed by your impatience.<br><br>
+        To fix the system, type the Python command to show "hello world" below:<br><br>
+        Digite o comando: <span id="typed-command"></span><span id="cursor">_</span>
+    </div>
+
     <script>
-        // --- LOGICA DO CANVA MATRIX ---
+        // --- MATRIX BACKGROUND ---
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+        let matrixInterval;
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
-        const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$#@%';
+        const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%';
         const matrixLetters = letters.split('');
         const fontSize = 16;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
-
         function drawMatrix() {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             ctx.fillStyle = '#0F0';
             ctx.font = fontSize + 'px monospace';
-
             for (let i = 0; i < drops.length; i++) {
                 const text = matrixLetters[Math.floor(Math.random() * matrixLetters.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             }
         }
-        setInterval(drawMatrix, 30);
+        function startMatrix() { matrixInterval = setInterval(drawMatrix, 30); }
+        startMatrix();
 
-
-        // --- LÓGICA DO TEXTO ESTILO DVD ---
+        // --- DVD TEXT ---
         const textElement = document.getElementById('dvd-text');
         let posX = Math.random() * (window.innerWidth - 300);
         let posY = Math.random() * (window.innerHeight - 200);
-        let speedX = 3;
-        let speedY = 3;
+        let speedX = 4;
+        let speedY = 4;
         const colors = ['#00ff00', '#ff00ff', '#00ffff', '#ffff00', '#ff0000', '#0000ff', '#ffffff'];
-
         function moveText() {
-            posX += speedX;
-            posY += speedY;
-
+            posX += speedX; posY += speedY;
             const textWidth = textElement.offsetWidth;
             const textHeight = textElement.offsetHeight;
-
-            if (posX <= 0 || posX + textWidth >= window.innerWidth) {
-                speedX = -speedX;
-                changeColor();
-            }
-            if (posY <= 0 || posY + textHeight >= window.innerHeight) {
-                speedY = -speedY;
-                changeColor();
-            }
-
-            textElement.style.left = posX + 'px';
-            textElement.style.top = posY + 'px';
+            if (posX <= 0 || posX + textWidth >= window.innerWidth) { speedX = -speedX; changeColor(); }
+            if (posY <= 0 || posY + textHeight >= window.innerHeight) { speedY = -speedY; changeColor(); }
+            textElement.style.left = posX + 'px'; textElement.style.top = posY + 'px';
             requestAnimationFrame(moveText);
         }
-
-        function changeColor() {
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            textElement.style.color = randomColor;
-        }
+        function changeColor() { textElement.style.color = colors[Math.floor(Math.random() * colors.length)]; }
         moveText();
 
-
-        // --- LÓGICA DO BOTÃO QUE FOGE ---
+        // --- BOTÃO QUE FOGE + TELA AZUL ---
         const button = document.getElementById('flee-button');
+        let annoyCount = 0;
+        let bsodActive = false;
+        let typedText = "";
+
+        function triggerBSOD() {
+            bsodActive = true;
+            typedText = "";
+            document.getElementById('typed-command').innerText = "";
+            document.getElementById('blue-screen').style.display = 'block';
+            document.getElementById('bg-audio').pause();
+            clearInterval(matrixInterval);
+        }
+
+        function recoverFromBSOD() {
+            bsodActive = false;
+            annoyCount = 0;
+            document.getElementById('blue-screen').style.display = 'none';
+            document.getElementById('bg-audio').play();
+            startMatrix();
+            // Reseta a posição do botão para o centro para não sumir da tela
+            button.style.position = 'absolute';
+            button.style.left = 'auto';
+            button.style.top = 'auto';
+        }
+
         button.addEventListener('mouseover', () => {
+            if(bsodActive) return;
+            annoyCount++;
+            if (annoyCount >= 5) { triggerBSOD(); return; }
             const newX = Math.random() * (window.innerWidth - button.offsetWidth);
             const newY = Math.random() * (window.innerHeight - button.offsetHeight);
-            button.style.position = 'fixed';
-            button.style.left = newX + 'px';
-            button.style.top = newY + 'px';
+            button.style.position = 'fixed'; button.style.left = newX + 'px'; button.style.top = newY + 'px';
         });
+        button.addEventListener('click', triggerBSOD);
+
+        // --- ESCUTA O TECLADO NA TELA AZUL ---
+        window.addEventListener('keydown', (e) => {
+            if (!bsodActive) return;
+
+            // Evita comandos do navegador como F5
+            if (e.key.length === 1) {
+                typedText += e.key;
+            } else if (e.key === 'Backspace') {
+                typedText = typedText.slice(0, -1);
+            }
+
+            document.getElementById('typed-command').innerText = typedText;
+
+            // Se digitar exatamente o comando, o site ressuscita
+            if (typedText === 'hello world') {
+                recoverFromBSOD();
+            }
+        });
+
+        // Piscar o cursor da digitação
+        setInterval(() => {
+            const cursor = document.getElementById('cursor');
+            cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+        }, 500);
     </script>
 </body>
 </html>
-
