@@ -116,12 +116,6 @@
     <div id="dvd-text">hello world</div>
 
     <div class="ui-container">
-        <audio id="bg-audio" autoplay loop controls style="opacity: 0.5; height: 30px;">
-            <!-- CORREÇÃO: Caminho relativo absoluto para o servidor online -->
-            <source src="./videoplayback.mp3" type="audio/mpeg">
-            Seu navegador não suporta áudio.
-        </audio>
-
         <div class="counter-box">
             VISITANTE NÚMERO: <span class="counter-number">999.874.123</span>
         </div>
@@ -131,10 +125,9 @@
         </div>
     </div>
 
-    <!-- VÍDEO COMPATÍVEL COM AS REGRAS DO FIREFOX -->
+    <!-- VÍDEO DO RICKROLL -->
     <div id="rickroll-container">
         <video id="rickroll-video" loop>
-            <!-- CORREÇÃO: Caminho relativo absoluto para o servidor online -->
             <source src="./rickroll.mp4" type="video/mp4">
             Seu navegador não suporta vídeo.
         </video>
@@ -190,19 +183,16 @@
         // --- CONTROLE DE INTERAÇÃO DO USUÁRIO ---
         let userInteracted = false;
         const overlay = document.getElementById('click-overlay');
-        const bgAudio = document.getElementById('bg-audio');
 
         overlay.addEventListener('click', () => {
             userInteracted = true;
-            overlay.style.display = 'none';
-            if(bgAudio) bgAudio.play();
+            overlay.style.display = 'none'; // Libera os botões por baixo após o primeiro clique silencioso
         });
 
-        // --- GATILHO DEFINITIVO ANTI-PAUSA ---
+        // --- GATILHO RICKROLL ---
         const button = document.getElementById('flee-button');
 
         function startRickroll() {
-            if(bgAudio) bgAudio.pause();
             clearInterval(matrixInterval);
 
             const container = document.getElementById('rickroll-container');
@@ -212,7 +202,7 @@
                 container.style.display = 'block';
                 
                 rickVideo.play().catch(error => {
-                    console.log("Falha na reprodução direta, rodando em modo de segurança:", error);
+                    console.log("Modo de segurança ativado:", error);
                     rickVideo.muted = true;
                     rickVideo.play();
                 });
