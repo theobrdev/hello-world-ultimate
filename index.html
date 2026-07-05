@@ -188,7 +188,7 @@
         function changeColor() { textElement.style.color = colors[Math.floor(Math.random() * colors.length)]; }
         moveText();
 
-        // --- BOTÃO DA TELA AZUL IMEDIATA ---
+        // --- BOTÃO DA TELA AZUL ---
         const button = document.getElementById('flee-button');
         let bsodActive = false;
         let typedText = "";
@@ -199,7 +199,6 @@
             document.getElementById('typed-command').innerText = "";
             document.getElementById('blue-screen').style.display = 'block';
             
-            // Pausa o som se ele estiver tocando para dar o efeito dramático
             const audio = document.getElementById('bg-audio');
             if(audio) audio.pause();
             
@@ -214,9 +213,12 @@
             if(audio) audio.play();
             
             startMatrix();
+
+            // Abre o link exato da rádio do Rickroll que você enviou!
+            window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1', '_blank');
         }
 
-        // Se encostar o mouse OU se clicar, a tela azul ativa na hora!
+        // ADICIONADO DE VOLTA: Gatilhos do botão
         button.addEventListener('mouseover', () => {
             if(!bsodActive) triggerBSOD();
         });
@@ -224,7 +226,7 @@
             if(!bsodActive) triggerBSOD();
         });
 
-        // --- ESCUTA O TECLADO NA TELA AZUL ---
+        // --- ESCUTA O TECLADO ---
         window.addEventListener('keydown', (e) => {
             if (!bsodActive) return;
 
@@ -241,10 +243,14 @@
             }
         });
 
+        // ADICIONADO DE VOLTA: Piscar o cursor da digitação
         setInterval(() => {
             const cursor = document.getElementById('cursor');
-            cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+            if(cursor) {
+                cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+            }
         }, 500);
     </script>
 </body>
 </html>
+
